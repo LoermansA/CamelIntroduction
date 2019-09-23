@@ -13,8 +13,12 @@ public class MySpringBootRouter extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("file:./in").routeId("fileIO")
+        from("file:./in").routeId("fileIO-met-xpath")
         .to("log:fileIO")
-        .to("file:./out");
+        .choice().when().xpath("//for = 'makeitwork'")
+            .to("file:./out/special")
+        .otherwise()
+            .to("file:./out/regular")
+        .end();
     }
 }

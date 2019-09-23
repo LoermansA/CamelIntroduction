@@ -28,3 +28,19 @@ Na genereren:
 
 - `cd camel-introductie`
 - Opstarten met: `mvn spring-boot:run`
+
+## FileIO (resultaat: stap2)
+
+- Pas de route aan:
+
+```java
+from("file:./in").routeId("fileIO")
+.to("log:fileIO")
+.to("file:./out");
+```
+
+- Opstarten met: `mvn spring-boot:run`
+
+### Routeren gebaseerd op inhoud (resultaat: stap3)
+
+- Pas de route aan:
