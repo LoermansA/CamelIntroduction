@@ -13,12 +13,18 @@ public class MySpringBootRouter extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("file:./in").routeId("fileIO-met-xpath")
-        .to("log:fileIO")
+        from("restlet:http://localhost:8888/greeting?restletMethod=POST").routeId("restEndpoint")
+        .to("log:restlet")
         .choice().when().xpath("//for = 'makeitwork'")
-            .to("file:./out/special")
+            .to("direct:special")
         .otherwise()
-            .to("file:./out/regular")
+            .to("direct:regular")
         .end();
+
+        from("direct:special")
+        .to("file:./out/special");
+
+        from("direct:regular")
+        .to("file:./out/regular");
     }
 }

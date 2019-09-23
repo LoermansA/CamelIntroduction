@@ -34,9 +34,9 @@ Na genereren:
 - Pas de route aan:
 
 ```java
-from("file:./in").routeId("fileIO")
-.to("log:fileIO")
-.to("file:./out");
+    from("file:./in").routeId("fileIO")
+    .to("log:fileIO")
+    .to("file:./out");
 ```
 
 - Opstarten met: `mvn spring-boot:run`
@@ -44,3 +44,46 @@ from("file:./in").routeId("fileIO")
 ### Routeren gebaseerd op inhoud (resultaat: stap3)
 
 - Pas de route aan:
+
+```java
+    from("file:./in").routeId("fileIO-met-xpath")
+    .to("log:fileIO")
+    .choice().when().xpath("//for = 'makeitwork'")
+        .to("file:./out/special")
+    .otherwise()
+        .to("file:./out/regular")
+    .end();
+```
+
+- Opstarten met: `mvn spring-boot:run`
+
+### Zelfde maar nu met een REST endpoint en routes (resultaat: stap 4)
+
+- Pas de route aan:
+
+```java
+    from("restlet:http://localhost:8888/greeting?restletMethod=POST").routeId("restEndpoint")
+    .to("log:restlet")
+    .choice().when().xpath("//for = 'makeitwork'")
+        .to("direct:special")
+    .otherwise()
+        .to("direct:regular")
+    .end();
+
+    from("direct:special")
+    .to("file:./out/special");
+
+    from("direct:regular")
+    .to("file:./out/regular");
+```
+
+- Testen met:
+
+```bash
+$ curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>makeitwork</for></greeting>' http://localhost:8888/greeting
+```
+en
+
+```bash
+$ curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>other</for></greeting>' http://localhost:8888/greeting
+```
