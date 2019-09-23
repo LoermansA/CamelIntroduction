@@ -57,7 +57,7 @@ Na genereren:
 
 - Opstarten met: `mvn spring-boot:run`
 
-### Zelfde maar nu met een REST endpoint en routes (resultaat: stap 4)
+### Zelfde maar nu met een REST endpoint en routes (resultaat: stap4)
 
 - Pas de route aan:
 
@@ -80,10 +80,52 @@ Na genereren:
 - Testen met:
 
 ```bash
-$ curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>makeitwork</for></greeting>' http://localhost:8888/greeting
+> curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>makeitwork</for></greeting>' http://localhost:8888/greeting
 ```
+
 en
 
 ```bash
-$ curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>other</for></greeting>' http://localhost:8888/greeting
+> curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>other</for></greeting>' http://localhost:8888/greeting
+```
+
+## Zelfde maar nu met een Processor (resultaat: stap5)
+
+- Maak de volgende class in de juiste package:
+
+```java
+package nl.enshore.makeitwork.processor;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyAwesomeProcessor implements Processor {
+
+    Logger logger = LoggerFactory.getLogger(MyAwesomeProcessor.class);
+
+    public void process(Exchange exchange) throws Exception {
+        String payload = exchange.getIn().getBody(String.class);
+        logger.info(payload);
+    }
+}
+```
+
+```java
+    from("restlet:http://localhost:8888/greeting?restletMethod=POST").routeId("restEndpoint")
+    .process(myAwesomeProcessor)
+    .choice().when().xpath("//for = 'makeitwork'")
+        .to("direct:special")
+    .otherwise()
+        .to("direct:regular")
+    .end();
+
+    from("direct:special")
+    .to("file:./out/special");
+
+    from("direct:regular")
+    .to("file:./out/regular");
 ```

@@ -1,7 +1,10 @@
 package nl.enshore.makeitwork;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import nl.enshore.makeitwork.processor.MyAwesomeProcessor;
 
 /**
  * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
@@ -11,10 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class MySpringBootRouter extends RouteBuilder {
 
+    @Autowired
+    MyAwesomeProcessor myAwesomeProcessor;
+
     @Override
     public void configure() {
         from("restlet:http://localhost:8888/greeting?restletMethod=POST").routeId("restEndpoint")
-        .to("log:restlet")
+        .process(myAwesomeProcessor)
         .choice().when().xpath("//for = 'makeitwork'")
             .to("direct:special")
         .otherwise()
