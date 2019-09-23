@@ -129,3 +129,5 @@ public class MyAwesomeProcessor implements Processor {
     from("direct:regular")
     .to("file:./out/regular");
 ```
+
+- Testen als stap 4
