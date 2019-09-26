@@ -56,6 +56,22 @@ Na genereren:
 ```
 
 - Opstarten met: `mvn spring-boot:run`
+- Testen met testbestanden:
+```xml
+<greeting>
+    <message>Hello, Class of MakeItWork!</message>
+    <for>makeitwork</for>
+</greeting>
+```
+
+en:
+
+```xml
+<greeting>
+    <message>Hello, other group!</message>
+    <for>othergroup</for>
+</greeting>
+```
 
 ### Zelfde maar nu met een REST endpoint en routes (resultaat: stap4)
 
