@@ -102,7 +102,7 @@ en:
 en
 
 ```bash
-> curl -X POST -d '<greeting><message>Hello, Class of MakeItWork!</message><for>other</for></greeting>' http://localhost:8888/greeting
+> curl -X POST -d '<greeting><message>Hello, other group!</message><for>othergroup</for></greeting>' http://localhost:8888/greeting
 ```
 
 ## Zelfde maar nu met een Processor (resultaat: stap5)
